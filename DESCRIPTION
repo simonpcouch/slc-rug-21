@@ -1,0 +1,25 @@
+Package: rstudioconf2021
+Title: Source code for my 2021 SLC RUG talk!
+Version: 1.0.0
+Authors@R: 
+    person(given = "Simon",
+           family = "Couch",
+           role = c("aut", "cre"),
+           email = "simonpatrickcouch@gmail.com")
+Description: Source code for my 2021 Salt Lake City R User Group talk!
+Imports:
+    stacks,
+    tune (>= 0.1.2),
+    dplyr (>= 1.0.0),
+    rlang (>= 0.4.0),
+    tibble (>= 2.1.3),
+    purrr (>= 0.3.2), 
+    parsnip (>= 0.0.4),
+    workflows (>= 0.1.0),
+    recipes (>= 0.1.15),
+    yardstick
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
