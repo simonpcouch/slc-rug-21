@@ -7,6 +7,8 @@ library(dplyr)
 
 
 # "load" in commute data ;) ---------------------------------------------------
+set.seed(2021)
+
 commute <- 
   tibble(
     mode = 
@@ -43,7 +45,7 @@ commute_test <- testing(splits)
 folds <- vfold_cv(commute_train, v = 5)
 
 commute_rec <-
-  recipe(food_c ~ ., commute_train) %>%
+  recipe(time_h ~ ., commute_train) %>%
   step_dummy(all_nominal()) %>%
   step_zv(all_predictors())
 
@@ -135,14 +137,14 @@ st_preds <-
   bind_cols(commute_test)
 
 ggplot(st_preds) +
-  aes(x = food_c, y = .pred) + 
+  aes(x = time_h, y = .pred) + 
   geom_point()
 
 # compare to member predictions
-st_preds <- 
+member_preds <- 
   predict(st, commute_test, members = TRUE)
 
-st_preds %>%
+member_preds %>%
   bind_cols(commute_test) %>%
   pivot_longer(
     cols = c(.pred, contains("_res")),
@@ -151,10 +153,10 @@ st_preds %>%
   ) %>%
   ggplot() +
   aes(
-    x = food_c,
+    x = time_h,
     y = prediction,
     col = model
   ) + 
   geom_point()
 
-map_dfr(st_preds, rmse_vec, truth = commute_test$food_c)
+map_dfr(member_preds, rmse_vec, truth = commute_test$time_h)
