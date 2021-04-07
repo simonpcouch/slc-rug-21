@@ -140,6 +140,7 @@ ggplot(st_preds) +
   aes(x = time_h, y = .pred) + 
   geom_point()
 
+
 # compare to member predictions
 member_preds <- 
   predict(st, commute_test, members = TRUE)
