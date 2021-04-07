@@ -6,7 +6,6 @@ library(dplyr)
 
 
 
-
 # "load" in commute data ;) ---------------------------------------------------
 commute <- 
   tibble(
@@ -103,19 +102,34 @@ nn_res
 
 
 # build the ensemble ----------------------------------------------------------
-st <- 
+
+# constructing a data stack
+data_st <- 
   stacks() %>%
   add_candidates(lr_res) %>%
   add_candidates(knn_res) %>%
-  add_candidates(nn_res) %>%
-  blend_predictions() %>%
+  add_candidates(nn_res)
+  
+# constructing a model stack
+model_st <-
+  data_st %>%
+  blend_predictions()
+
+# fitting candidates with
+# nonzero stacking coefficients
+st <-
+  model_st %>%
   fit_members()
 
-st
+
 
 # check it out! ---------------------------------------------------------------
+
+# some diagnostic plotting
 autoplot(st)
 
+
+# predict on new data
 st_preds <- 
   predict(st, commute_test) %>%
   bind_cols(commute_test)
@@ -124,11 +138,12 @@ ggplot(st_preds) +
   aes(x = food_c, y = .pred) + 
   geom_point()
 
+# compare to member predictions
 st_preds <- 
-  predict(st, commute_test, members = TRUE) %>%
-  bind_cols(commute_test)
+  predict(st, commute_test, members = TRUE)
 
 st_preds %>%
+  bind_cols(commute_test) %>%
   pivot_longer(
     cols = c(.pred, contains("_res")),
     names_to = "model",
@@ -142,4 +157,4 @@ st_preds %>%
   ) + 
   geom_point()
 
-
+map_dfr(st_preds, rmse_vec, truth = commute_test$food_c)
